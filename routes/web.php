@@ -4,6 +4,8 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Maatwebsite\Excel\Row;
 use App\Http\Controllers\PatientController;
+use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\DashboardCalenderController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -14,9 +16,14 @@ Route::middleware(('verified'))->group(function () {
         return view('dashboard');
     })->middleware(['auth', 'verified'])->name('dashboard');
     Route::resource('patients', PatientController::class);
-    // Route::get('/patient-details', [PatientController::class, 'show'])->name('patients.show');
-    // Route::get('/edit-patient-details', [PatientController::class, 'edit'])->name('patients.edit');
+    Route::resource('appointments', AppointmentController::class);
+    Route::get('/dashboard_calender', [DashboardCalenderController::class, 'dashboard'])->name('dashboard_calender');
+
 });
+// Route::middleware(['auth', 'role:doctor'])->group(function () {
+//     Route::get('/doctor-dashboard', [DoctorController::class, 'index']);
+// });
+
 
 
 Route::middleware('auth')->group(function () {
