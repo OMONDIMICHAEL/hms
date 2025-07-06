@@ -1,4 +1,15 @@
 <x-app-layout>
+    @if(session('success'))
+        <div class="bg-green-100 text-green-800 p-4 rounded mb-4">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="bg-red-100 text-red-700 p-4 rounded mb-4">
+            {{ session('error') }}
+        </div>
+    @endif
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('Appointments') }}
@@ -30,8 +41,16 @@
                 <!-- Doctor Name -->
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Doctor Name <span class="text-red-500">*</span></label>
-                    <input type="text" name="doctor_name" value="{{ old('doctor_name', $appointment->doctor_name ?? '') }}" 
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required>
+                    {{-- <input type="text" name="doctor_name" value="{{ old('doctor_name', $appointment->doctor_name ?? '') }}" 
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required> --}}
+                    <select name="doctor_name" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md" required>
+                        <option value="">-- Select Doctor --</option>
+                        @foreach ($users as $user)
+                            <option value="{{ $user->name }}" >
+                                {{ $user->name }}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
 
                 <!-- Date and Time -->

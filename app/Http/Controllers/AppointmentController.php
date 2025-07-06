@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Appointment;
 use App\Models\Patient;
+use App\Models\User;
 
 use Illuminate\Http\Request;
 
@@ -23,12 +24,13 @@ class AppointmentController extends Controller
     public function create()
     {
         $patients = Patient::all();
-        return view('appointments.create_or_edit', compact('patients'));
+        $users = User::where('role', 'doctor')->get();
+        return view('appointments.create_or_edit', compact('users','patients'));
     }
 
     /**
      * Store a newly created resource in storage.
-     */
+     */ 
     public function store(Request $request)
     {
         $request->validate([
@@ -57,7 +59,8 @@ class AppointmentController extends Controller
     public function edit(Appointment $appointment)
     {
         $patients = Patient::all();
-        return view('appointments.create_or_edit', compact('appointment', 'patients'));
+        $users = User::where('role', 'doctor')->get();
+        return view('appointments.create_or_edit', compact('appointment', 'patients', 'users'));
     }
 
     /**

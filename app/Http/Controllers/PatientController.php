@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\Patient;
+use App\Http\Controllers\InsuranceClaimController;
 
 use Illuminate\Http\Request;
 

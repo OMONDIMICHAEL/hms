@@ -9,6 +9,7 @@
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
                     </a>
                 </div>
+                <div class="font-medium text-base text-gray-800 dark:text-gray-200">{{ Auth::user()->role }}</div>
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
@@ -23,6 +24,12 @@
                     </x-nav-link>
                     <x-nav-link :href="route('dashboard_calender')" :active="request()->routeIs('dashboard_calender')">
                         {{ __('Calender') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('medical-records.index')" :active="request()->routeIs('medical-records.index')">
+                        {{ __('EMR') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('insurance-claims.index')" :active="request()->routeIs('insurance-claims.index')">
+                        {{ __('Insurance') }}
                     </x-nav-link>
                 </div>
             </div>
