@@ -28,8 +28,11 @@
                     <x-nav-link :href="route('medical-records.index')" :active="request()->routeIs('medical-records.index')">
                         {{ __('EMR') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('insurance-claims.index')" :active="request()->routeIs('insurance-claims.index')">
-                        {{ __('Insurance') }}
+                    <x-nav-link :href="route('expenses.create')" :active="request()->routeIs('expenses.create')">
+                        {{ __('Expenses') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('stocks.create')" :active="request()->routeIs('stocks.create')">
+                        {{ __('Pharmacy') }}
                     </x-nav-link>
                 </div>
             </div>

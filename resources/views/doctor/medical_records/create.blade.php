@@ -5,11 +5,11 @@
         </div>
     @endif
 
-    @if(session('error'))
-        <div class="bg-red-100 text-red-700 p-4 rounded mb-4">
-            {{ session('error') }}
-        </div>
-    @endif
+    {{-- @if(session('error')) --}}
+        <!-- <div class="bg-red-100 text-red-700 p-4 rounded mb-4"> -->
+            {{-- {{ session('error') }} --}}
+        <!-- </div> -->
+    {{-- @endif --}}
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('Add Medical Record') }}

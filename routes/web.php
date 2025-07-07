@@ -8,6 +8,12 @@ use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\DashboardCalenderController;
 use App\Http\Controllers\MedicalRecordController;
 use App\Http\Controllers\InsuranceClaimController;
+use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\MedicineStockController;
+use App\Http\Controllers\PharmacyController;
+use App\Http\Controllers\DispenseController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -43,6 +49,43 @@ Route::middleware(('verified'))->group(function () {
         // This will automatically register all standard routes (index, create, store, show, edit, update, destroy) ETC.
 
 });
+Route::middleware(['auth'])->group(function () {
+    Route::get('/expenses/create', [ExpenseController::class, 'create'])->name('expenses.create');
+    Route::post('/expenses/store', [ExpenseController::class, 'store'])->name('expenses.store');
+    Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses.index');
+    Route::get('/export/pdf', [ExpenseController::class, 'exportPdf'])->name('expenses.export.pdf');
+    Route::get('/export/excel', [ExpenseController::class, 'export'])->name('expenses.export');
+    Route::get('/expenses/{expense}/edit', [ExpenseController::class, 'edit'])->name('expenses.edit');
+    Route::put('/expenses/{expense}', [ExpenseController::class, 'update'])->name('expenses.update');
+    Route::delete('/expenses/{expense}', [ExpenseController::class, 'destroy'])->name('expenses.destroy');
+    Route::get('/expenses/chart-data', [ExpenseController::class, 'chartData']);
+    Route::get('/expenses/monthly-breakdown', [ExpenseController::class, 'monthlyBreakdown'])->name('expenses.breakdown');
+});
+Route::middleware(['auth'])->group(function () {
+    Route::resource('payments', PaymentController::class)->only(['store']);
+    Route::get('/payments/create/{invoice}', [PaymentController::class, 'create'])->name('payments.create');
+    Route::get('/invoices/{invoice}', [InvoiceController::class, 'show'])->name('invoices.show');
+});
+Route::get('/payments/{payment}/receipt', [PaymentController::class, 'generateReceipt'])->name('payments.receipt');
+Route::resource('stocks', MedicineStockController::class);
+Route::post('/pharmacy/dispense/{record}', [PharmacyController::class, 'dispense'])->name('pharmacy.dispense');
+Route::get('/pharmacy/alerts', [PharmacyController::class, 'alerts'])->name('pharmacy.alerts');
+Route::get('/{stock}/edit', [MedicineStockController::class, 'edit'])->name('medicine_stocks.edit');
+Route::put('/{stock}', [MedicineStockController::class, 'update'])->name('medicine_stocks.update');
+
+Route::middleware(['auth'])->group(function () {
+    // Route::post('/dispense', [DispenseController::class, 'dispense'])->name('dispense.medication');
+    Route::post('/dispense', [DispenseController::class, 'dispense'])->name('dispense.store');
+    Route::get('/stock/alerts', [MedicineStockController::class, 'alerts'])->name('stock.alerts');
+    Route::get('/pharmacy/dispense{stockItems}', [DispenseController::class, 'index'])->name('dispense.med');
+});
+
+// Route::prefix('expenses')->name('expenses.')->group(function () {
+//     Route::get('/', [ExpenseController::class, 'index'])->name('index');
+//     Route::post('/store', [ExpenseController::class, 'store'])->name('store');
+//     Route::get('/export/pdf', [ExpenseController::class, 'exportPdf'])->name('export.pdf');
+//     Route::get('/export/excel', [ExpenseController::class, 'export'])->name('export');
+// });
 // Route::middleware(['auth', 'role:doctor'])->group(function () {
 //     Route::get('/doctor-dashboard', [DoctorController::class, 'index']);
 // });

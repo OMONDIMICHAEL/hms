@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('inventory_suppliers', function (Blueprint $table) {
+        Schema::create('hospital_expenses', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('contact_person')->nullable();
-            $table->string('phone')->nullable();
-            $table->string('email')->nullable();
-            $table->text('address')->nullable();
+            $table->string('expense_type'); // e.g., Utilities, Staff Salaries
+            $table->text('description')->nullable();
+            $table->decimal('amount', 12, 2);
+            $table->date('expense_date');
             $table->timestamps();
         });
     }
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('inventory_suppliers');
+        Schema::dropIfExists('hospital_expenses');
     }
 };

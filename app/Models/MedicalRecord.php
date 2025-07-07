@@ -32,4 +32,12 @@ class MedicalRecord extends Model
     // public function doctor() {
     //     return $this->belongsTo(User::class);
     // }
+    public function invoice()
+    {
+        return $this->hasOne(PatientInvoice::class);
+    }
+    public function dispensations()
+    {
+        return $this->hasMany(Dispensation::class);
+    }
 }

@@ -12,6 +12,8 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use App\Exports\MedicalRecordsExport;
 use Illuminate\Validation\Rule;
 use Exception;
+use App\Models\PatientInvoice;
+use App\Models\PatientPayment;
 
 class MedicalRecordController extends Controller
 {
@@ -31,7 +33,7 @@ class MedicalRecordController extends Controller
 
     public function index()
     {
-        $records = MedicalRecord::with('patient')
+        $records = MedicalRecord::with('patient', 'invoice')
                     ->where('doctor_id', auth()->id())
                     ->latest()
                     ->paginate(10); // paginate instead of get()
@@ -78,7 +80,7 @@ class MedicalRecordController extends Controller
             if ($attachmentPath && !in_array(pathinfo($attachmentPath, PATHINFO_EXTENSION), ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx'])) {
                 return back()->with('error', 'Invalid file type for attachment.');
             }
-            MedicalRecord::create([
+            $record = MedicalRecord::create([
                 'doctor_id' => auth()->id(),
                 'patient_id' => $validated['patient_id'],
                 'diagnosis' => $validated['diagnosis'],
@@ -89,9 +91,17 @@ class MedicalRecordController extends Controller
                 'recorded_at' => $validated['recorded_at'],
                 'attachment' => $attachmentPath,
             ]);
+            // $record = MedicalRecord::create($request->all());
+
+            $record->invoice()->create([
+                'amount' => $record->amount,
+                'status' => 'unpaid',
+                'billed_at' => now(),
+            ]);
 
 
             return redirect()->route('medical-records.index')->with('success', 'Record added.');
+            // return redirect()->back()->with('success', 'Record added.');
         } catch (Exception $e) {
             // Delete the file if it was uploaded but record creation failed
             if (isset($attachmentPath)) {

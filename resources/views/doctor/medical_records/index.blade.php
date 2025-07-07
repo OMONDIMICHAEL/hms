@@ -108,7 +108,47 @@
                                             </svg>
                                         </button>
                                     </form>
+                                    @if($record->invoice)
+                                        <div class="flex space-x-3">
+                                            <a href="{{ route('payments.create', $record->invoice->id) }}" 
+                                               class="inline-flex items-center px-3 py-1 bg-blue-50 text-blue-700 rounded-md text-sm font-medium hover:bg-blue-100 hover:text-blue-800 transition-colors">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                                </svg>
+                                                Pay
+                                            </a>
+                                            <a href="{{ route('invoices.show', $record->invoice->id) }}" 
+                                               class="inline-flex items-center px-3 py-1 bg-gray-50 text-gray-700 rounded-md text-sm font-medium hover:bg-gray-100 hover:text-gray-800 transition-colors">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                                                  <path fill-rule="evenodd" d="M4.93 2.31a41.401 41.401 0 0 1 10.14 0C16.194 2.45 17 3.414 17 4.517V17.25a.75.75 0 0 1-1.075.676l-2.8-1.344-2.8 1.344a.75.75 0 0 1-.65 0l-2.8-1.344-2.8 1.344A.75.75 0 0 1 3 17.25V4.517c0-1.103.806-2.068 1.93-2.207Zm4.822 3.997a.75.75 0 1 0-1.004-1.114l-2.5 2.25a.75.75 0 0 0 0 1.114l2.5 2.25a.75.75 0 0 0 1.004-1.114L8.704 8.75h1.921a1.875 1.875 0 0 1 0 3.75.75.75 0 0 0 0 1.5 3.375 3.375 0 1 0 0-6.75h-1.92l1.047-.943Z" clip-rule="evenodd" />
+                                                </svg>
+                                                Invoice
+                                            </a>
+                                            <a href="{{ route('dispense.med', $record->id) }}" class="inline-flex items-center px-3 py-1 bg-gray-50 text-gray-700 rounded-md text-sm font-medium hover:bg-gray-100 hover:text-gray-800 transition-colors">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                                                  <path fill-rule="evenodd" d="M17 4.25A2.25 2.25 0 0 0 14.75 2h-5.5A2.25 2.25 0 0 0 7 4.25v2a.75.75 0 0 0 1.5 0v-2a.75.75 0 0 1 .75-.75h5.5a.75.75 0 0 1 .75.75v11.5a.75.75 0 0 1-.75.75h-5.5a.75.75 0 0 1-.75-.75v-2a.75.75 0 0 0-1.5 0v2A2.25 2.25 0 0 0 9.25 18h5.5A2.25 2.25 0 0 0 17 15.75V4.25Z" clip-rule="evenodd" />
+                                                  <path fill-rule="evenodd" d="M14 10a.75.75 0 0 0-.75-.75H3.704l1.048-.943a.75.75 0 1 0-1.004-1.114l-2.5 2.25a.75.75 0 0 0 0 1.114l2.5 2.25a.75.75 0 1 0 1.004-1.114l-1.048-.943h9.546A.75.75 0 0 0 14 10Z" clip-rule="evenodd" />
+                                                </svg>
+                                                Dispense
+                                            </a>
+                                        </div>
+                                    @else
+                                        <span class="inline-flex items-center px-3 py-1 bg-red-50 text-red-700 rounded-md text-sm font-medium">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                            </svg>
+                                            No Invoice
+                                        </span>
+                                    @endif
                                 </div>
+                                <!-- @if(!$record->dispensed) -->
+                                <!-- <form action="{{ route('pharmacy.dispense', $record->id) }}" method="POST"> -->
+                                    <!-- @csrf -->
+                                    <!-- <button type="submit" class="bg-green-500 px-3 py-1 text-white rounded">Dispense</button> -->
+                                <!-- </form> -->
+                                <!-- @else -->
+                                <!-- <span class="text-sm text-gray-500">Dispensed</span> -->
+                                <!-- @endif -->
                             </td>
                         </tr>
                         @empty
