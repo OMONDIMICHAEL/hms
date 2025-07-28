@@ -40,4 +40,8 @@ class MedicalRecord extends Model
     {
         return $this->hasMany(Dispensation::class);
     }
+    public function labTests()
+    {
+        return $this->hasMany(LabTest::class);
+    }
 }

@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MedicalRecord;
-use App\Models\Patient; // Assuming you have a Patient model for the patient relationship
-use App\Models\User;
+use App\Models\{MedicalRecord,Patient,User,PatientInvoice,PatientPayment};
+// use App\Models\Patient; // Assuming you have a Patient model for the patient relationship
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -12,8 +11,6 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use App\Exports\MedicalRecordsExport;
 use Illuminate\Validation\Rule;
 use Exception;
-use App\Models\PatientInvoice;
-use App\Models\PatientPayment;
 
 class MedicalRecordController extends Controller
 {
@@ -260,5 +257,11 @@ class MedicalRecordController extends Controller
         }
 
         return $query->orderBy('recorded_at', 'desc')->get();
+    }
+    // Download file
+    public function downloadMedicalRecord($id)
+    {
+      $medicalRecord = MedicalRecord::findOrFail($id);
+      return Storage::download($medicalRecord->attachment);
     }
 }

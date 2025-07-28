@@ -81,6 +81,7 @@
                                 </svg>
                                 Download File
                             </a>
+                          <a href="{{ route('medicalRecord.download', $medicalRecord->id) }}" class="btn btn-sm btn-success">Download File</a>
                         </div>
                     </div>
                     @endif

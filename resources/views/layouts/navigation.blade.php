@@ -34,6 +34,15 @@
                     <x-nav-link :href="route('stocks.create')" :active="request()->routeIs('stocks.create')">
                         {{ __('Pharmacy') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('lab-tests.index')" :active="request()->routeIs('lab-tests.index')">
+                        {{ __('Lab') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('rooms.index')" :active="request()->routeIs('rooms.index')">
+                        {{ __('Rooms') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('staff.index')" :active="request()->routeIs('staff.index')">
+                        {{ __('Staff') }}
+                    </x-nav-link>
                 </div>
             </div>
 

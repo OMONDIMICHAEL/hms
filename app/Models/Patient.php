@@ -29,5 +29,15 @@ protected $table = 'patients';
         'insurance_provider',
         'insurance_number',
     ];
+    public function roomAssignments()
+    {
+        return $this->hasMany(RoomAssignment::class);
+    }
+    public function rooms()
+    {
+        return $this->belongsToMany(Room::class, 'room_assignments')
+                    ->withPivot(['admitted_at', 'discharged_at'])
+                    ->withTimestamps();
+    }
 
 }

@@ -59,7 +59,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
         // Your custom middleware (example)
-        // 'role' => \App\Http\Middleware\RoleMiddleware::class,
+        'role' => \App\Http\Middleware\RoleMiddleware::class,
         // Add any other custom middleware here
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
 
