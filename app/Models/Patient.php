@@ -39,5 +39,9 @@ protected $table = 'patients';
                     ->withPivot(['admitted_at', 'discharged_at'])
                     ->withTimestamps();
     }
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class);
+    }
 
 }

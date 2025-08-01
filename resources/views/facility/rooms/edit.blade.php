@@ -106,6 +106,7 @@
                             class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100">
                             <option value="available" {{ old('status', $room->status) == 'available' ? 'selected' : '' }}>Available</option>
                             <option value="occupied" {{ old('status', $room->status) == 'occupied' ? 'selected' : '' }}>Occupied</option>
+                            <option value="maintenance" {{ old('status', $room->status) == 'full' ? 'selected' : '' }}>Full</option>
                             <option value="maintenance" {{ old('status', $room->status) == 'maintenance' ? 'selected' : '' }}>Maintenance</option>
                         </select>
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

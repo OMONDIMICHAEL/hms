@@ -45,7 +45,7 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach ($appointments as $appointment)
+                        @forelse ($appointments as $appointment)
                         <tr class="hover:bg-gray-50">
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
@@ -95,7 +95,13 @@
                                 </div>
                             </td>
                         </tr>
-                        @endforeach
+                        @empty
+                        <tr>
+                            <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+                                You have no appointments yet
+                            </td>
+                        </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

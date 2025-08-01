@@ -22,4 +22,10 @@ class Staff extends Model
     {
         return $this->belongsTo(Department::class);
     }
+    protected $statuses = [
+        'active' => 'Active',
+        'on_leave' => 'On Leave', 
+        'inactive' => 'Inactive'
+        // Add other statuses as needed
+    ];
 }

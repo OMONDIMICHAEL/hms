@@ -24,4 +24,8 @@ class HospitalExpense extends Model
         'Transport',
         'Others'
     ];
+    protected $casts = [
+        'expense_date' => 'date',
+        'amount' => 'float',
+    ];
 }

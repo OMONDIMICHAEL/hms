@@ -219,7 +219,7 @@
                                                 Discharge
                                             </button>
                                         </form>
-                                    @endif
+                                    @endif <br>
                                 @endforeach
                             </td>
                         </tr>

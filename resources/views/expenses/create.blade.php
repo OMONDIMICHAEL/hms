@@ -94,7 +94,7 @@
                 <label class="block text-sm font-medium text-gray-700">Expense Date <span class="text-red-500">*</span></label>
                 <input type="date" name="expense_date" required
                     class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    value="{{ old('expense_date', now()->format('Y-m-d')) }}">
+                    value="{{ now()->format('Y-m-d') }}">
                 @error('expense_date')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
@@ -148,7 +148,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-500">This Month</p>
-                            <p class="text-2xl font-semibold text-gray-900">KSh 24,500</p>
+                            <p class="text-2xl font-semibold text-gray-900">KSh {{ number_format($thisMonth ?? 0, 2) }}</p>
                         </div>
                         <div class="bg-blue-100 p-3 rounded-full">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -161,7 +161,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-500">Last Month</p>
-                            <p class="text-2xl font-semibold text-gray-900">KSh 32,800</p>
+                            <p class="text-2xl font-semibold text-gray-900">KSh {{ number_format($lastMonth ?? 0, 2) }}</p>
                         </div>
                         <div class="bg-green-100 p-3 rounded-full">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -174,7 +174,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-500">Quarterly Average</p>
-                            <p class="text-2xl font-semibold text-gray-900">KSh 28,400</p>
+                            <p class="text-2xl font-semibold text-gray-900">KSh {{ number_format($quarterlyAverage ?? 0, 2) }}</p>
                         </div>
                         <div class="bg-indigo-100 p-3 rounded-full">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">

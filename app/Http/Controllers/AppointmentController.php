@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Appointment;
 use App\Models\Patient;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Http\Request;
 
@@ -14,7 +15,8 @@ class AppointmentController extends Controller
      */
     public function index()
     {
-        $appointments = Appointment::with('patient')->latest()->get();
+        // $name = Auth::user()->name;
+        $appointments = Appointment::with('patient')->where('doctor_name', Auth::user()->name)->latest()->get();
         return view('appointments.index', compact('appointments'));
     }
 

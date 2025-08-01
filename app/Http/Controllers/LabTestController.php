@@ -29,7 +29,7 @@ class LabTestController extends Controller
             'medical_record_id' => 'required|exists:medical_records,id',
             'test_name' => 'required|string|max:255',
             'results' => 'nullable|string',
-            'status' => 'required|in:pending,completed',
+            'status' => 'required|in:pending,completed,in-progress,cancelled',
             'attachment' => 'nullable|file|mimes:jpg,png,pdf',
             'tested_at' => 'nullable|date',
         ]);

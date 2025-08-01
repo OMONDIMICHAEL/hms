@@ -10,7 +10,7 @@ use App\Exports\HospitalExpensesExport;
 // use PDF;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\DB; // for expense charts
+use Illuminate\Support\Facades\{DB, Cache}; // for expense charts
 
 class ExpenseController extends Controller
 {
@@ -66,8 +66,51 @@ class ExpenseController extends Controller
     }
     public function create()
     {
-        return view('expenses.create');
+        // Calculate this month's expenses
+        $thisMonth = HospitalExpense::whereMonth('expense_date', Carbon::now()->month)
+            ->whereYear('expense_date', Carbon::now()->year)
+            ->sum('amount');
+        
+        // Calculate last month's expenses
+        $lastMonth = HospitalExpense::whereMonth('expense_date', Carbon::now()->subMonth()->month)
+            ->whereYear('expense_date', Carbon::now()->subMonth()->year)
+            ->sum('amount');
+        
+        // Calculate quarterly average (last 3 months)
+        $quarterlyAverage = HospitalExpense::whereBetween('expense_date', [
+                Carbon::now()->subMonths(3)->startOfMonth(),
+                Carbon::now()->endOfMonth()
+            ])
+            ->avg('amount');
+        
+        return view('expenses.create', [
+            'thisMonth' => $thisMonth,
+            'lastMonth' => $lastMonth,
+            'quarterlyAverage' => $quarterlyAverage
+        ]);
     }
+
+    // i commented the above to use this below because it resource intensive so caching queries can benefit
+    // public function create()
+    // {
+    //     $stats = Cache::remember('expense_stats', now()->addHours(6), function() {
+    //         return [
+    //             'thisMonth' => HospitalExpense::whereMonth('expense_date', Carbon::now()->month)
+    //                 ->whereYear('expense_date', Carbon::now()->year)
+    //                 ->sum('amount'),
+    //             'lastMonth' => HospitalExpense::whereMonth('expense_date', Carbon::now()->subMonth()->month)
+    //                 ->whereYear('expense_date', Carbon::now()->subMonth()->year)
+    //                 ->sum('amount'),
+    //             'quarterlyAverage' => HospitalExpense::whereBetween('expense_date', [
+    //                     Carbon::now()->subMonths(3)->startOfMonth(),
+    //                     Carbon::now()->endOfMonth()
+    //                 ])
+    //                 ->avg('amount')
+    //         ];
+    //     });
+        
+    //     return view('expenses.create', $stats);
+    // }
 
     public function store(Request $request)
     {

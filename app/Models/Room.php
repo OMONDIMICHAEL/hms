@@ -12,7 +12,7 @@ class Room extends Model
     {
         if ($this->current_occupancy >= $this->capacity) {
             $this->status = 'full';
-        } elseif ($this->current_occupancy > 0) {
+        } elseif ($this->current_occupancy < $this->capacity) {
             $this->status = 'occupied';
         } else {
             $this->status = 'available';

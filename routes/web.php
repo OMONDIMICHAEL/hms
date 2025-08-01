@@ -1,14 +1,19 @@
 <?php
 
-use App\Http\Controllers\{ProfileController,PatientController,AppointmentController,DashboardCalenderController,MedicalRecordController,InsuranceClaimController,ExpenseController,PaymentController,InvoiceController,MedicineStockController,PharmacyController,DispenseController,LabTestController,RoomController,RoomAssignmentController,StaffController,RecruitmentController,DepartmentController};
-use Illuminate\Support\Facades\{Route, Storage, Response};
+use Illuminate\Contracts\Http\Kernel;
+app(Kernel::class);
+use Illuminate\Support\Facades\{Auth,  Route, Storage, Response};
+use App\Http\Controllers\Auth\RegisteredUserController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
+use App\Http\Controllers\{ProfileController,PatientController,AppointmentController,DashboardCalenderController,MedicalRecordController,InsuranceClaimController,ExpenseController,PaymentController,InvoiceController,MedicineStockController,PharmacyController,DispenseController,LabTestController,RoomController,RoomAssignmentController,StaffController,RecruitmentController,DepartmentController,DashboardController};
 use Maatwebsite\Excel\Row;
 
 
 Route::get('/', function () { return view('welcome'); });
 
 Route::middleware(['auth','verified'])->group(function () {
-    Route::get('/dashboard', function () { return view('dashboard'); })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
     Route::get('/dashboard_calender', [DashboardCalenderController::class, 'dashboard'])->name('dashboard_calender');
 });
 
@@ -34,11 +39,10 @@ Route::middleware(['auth','verified'])->group(function () {
     Route::post('/store_medical_record', [MedicalRecordController::class, 'store'])->name('medical-records.store');
     Route::get('/show_medical_record/{medicalRecord}', [MedicalRecordController::class, 'show'])->name('medical-records.show');
     Route::get('/edit_medical_/{medicalRecord}/_record', [MedicalRecordController::class, 'edit'])->name('medical-records.edit');
-    Route::post('/update_medical_record', [MedicalRecordController::class, 'update'])->name('medical-records.update');
+    Route::put('/update_medical_record/{medicalRecord}', [MedicalRecordController::class, 'update'])->name('medical-records.update');
     Route::get('export-pdf', [MedicalRecordController::class, 'exportPdf'])->name('medical-records.export.pdf');
     Route::get('export-excel', [MedicalRecordController::class, 'exportExcel'])->name('medical-records.export.excel');
-    Route::put('/medical-records/{medicalRecord}', [MedicalRecordController::class, 'update'])->name('medical-records.update');
-    Route::put('/medical-records/{medicalRecord}', [MedicalRecordController::class, 'updateNotes'])->name('medical-records.updateNotes');
+    Route::put('/medical-records-notes/{medicalRecord}', [MedicalRecordController::class, 'updateNotes'])->name('medical-records.updateNotes');
     Route::delete('/medical-records/{id}', [MedicalRecordController::class, 'destroy'])->name('medical-records.destroy');
     Route::get('/medicalRecord/download/{id}', [MedicalRecordController::class, 'downloadMedicalRecord'])->name('medicalRecord.download');
     // can always use this
@@ -136,4 +140,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+Route::middleware('web')->group(function () {
+    require __DIR__.'/auth.php';
+});

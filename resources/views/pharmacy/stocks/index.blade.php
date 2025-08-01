@@ -90,11 +90,16 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                @if(\Carbon\Carbon::parse($stock->expiry_date)->isPast())
+                                @php
+                                    $expiry = \Carbon\Carbon::parse($stock->expiry_date);
+                                    $now = now();
+                                @endphp
+
+                                @if($expiry->isPast())
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
                                         Expired
                                     </span>
-                                @elseif(\Carbon\Carbon::parse($stock->expiry_date)->diffInDays(now()) < 30)
+                                @elseif($expiry->diffInDays($now, true) < 30)
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
                                         Expiring Soon
                                     </span>

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\{MedicalRecord,Patient,User,PatientInvoice,PatientPayment};
 // use App\Models\Patient; // Assuming you have a Patient model for the patient relationship
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\{Storage,Auth, DB};
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -66,6 +66,7 @@ class MedicalRecordController extends Controller
             'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:2048',
         ]);
         try{
+            DB::beginTransaction();
             $attachmentPath = null;
             if ($request->hasFile('attachment')) {
                 $attachmentPath = $request->file('attachment')->store('medical-records', 'public');
@@ -88,6 +89,13 @@ class MedicalRecordController extends Controller
                 'recorded_at' => $validated['recorded_at'],
                 'attachment' => $attachmentPath,
             ]);
+            DB::commit();
+            // Debug the created record
+            logger('Created medical record', [
+                'id' => $record->id,
+                'doctor_id' => $record->doctor_id,
+                'patient_id' => $record->patient_id
+            ]);
             // $record = MedicalRecord::create($request->all());
 
             $record->invoice()->create([
@@ -99,15 +107,15 @@ class MedicalRecordController extends Controller
 
             return redirect()->route('medical-records.index')->with('success', 'Record added.');
             // return redirect()->back()->with('success', 'Record added.');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // Delete the file if it was uploaded but record creation failed
             if (isset($attachmentPath)) {
                 Storage::disk('public')->delete($attachmentPath);
             }
 
-            return back()
-                ->withInput()
-                ->with('error', 'Error creating record: ' . $e->getMessage());
+            DB::rollBack();
+            logger('Medical record creation failed', ['error' => $e->getMessage()]);
+            return back()->with('error', 'Failed to create record');
         }
     }
     public function show(MedicalRecord $medicalRecord)
@@ -160,25 +168,43 @@ class MedicalRecordController extends Controller
     {
         $this->authorizeAccess($medicalRecord);
 
-        $request->validate([
-            'patient_id' => 'required|exists:users,id',
-            'diagnosis' => 'required|string',
-            'notes' => 'nullable|string',
-            'prescription' => 'nullable|string',
+        $validated = $request->validate([
+            'patient_id' => 'required|exists:patients,id', // Changed from users to patients
+            'diagnosis' => 'required|string|max:1000',
+            'notes' => 'nullable|string|max:2000',
+            'prescription' => 'nullable|string|max:2000',
             'recorded_at' => 'required|date',
             'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:2048',
         ]);
 
-        if ($request->hasFile('attachment')) {
-            if ($medicalRecord->attachment) {
-                Storage::disk('public')->delete($medicalRecord->attachment);
+        DB::beginTransaction();
+        try {
+            // Handle file upload
+            if ($request->hasFile('attachment')) {
+                // Delete old attachment if exists
+                if ($medicalRecord->attachment) {
+                    Storage::disk('public')->delete($medicalRecord->attachment);
+                }
+                $validated['attachment'] = $request->file('attachment')
+                    ->store('medical-record-attachments', 'public');
             }
-            $medicalRecord->attachment = $request->file('attachment')->store('attachments', 'public');
+
+            // Ensure doctor_id doesn't get overwritten
+            unset($validated['doctor_id']);
+
+            $medicalRecord->update($validated);
+            
+            DB::commit();
+
+            return redirect()->route('medical-records.index')
+                   ->with('success', 'Medical record updated successfully')
+                   ->with('updated_record', $medicalRecord->fresh());
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Failed to update record: '.$e->getMessage())
+                         ->withInput();
         }
-
-        $medicalRecord->update($request->only(['patient_id', 'diagnosis', 'notes', 'prescription', 'recorded_at', 'attachment']));
-
-        return redirect()->route('medical-records.index')->with('success', 'Record updated.');
     }
     public function updateNotes(Request $request, MedicalRecord $medicalRecord)
     {
@@ -193,10 +219,18 @@ class MedicalRecordController extends Controller
         return redirect()->route('medical-records.show', $medicalRecord->id)->with('success', 'Record updated successfully.');
     }
 
-    private function authorizeAccess(MedicalRecord $record)
+    private function authorizeAccess(MedicalRecord $medicalRecord)
     {
-        if ($record->doctor_id !== auth()->id()) {
-            abort(403);
+        if (!$medicalRecord->exists) {
+            abort(404, 'Medical record not found');
+        }
+        
+        if (is_null($medicalRecord->doctor_id)) {
+            abort(403, 'This record has no assigned doctor');
+        }
+        
+        if ($medicalRecord->doctor_id !== auth()->id()) {
+            abort(403, 'Only the submitting doctor can update this record');
         }
     }
     public function searchIndex(Request $request)
@@ -261,7 +295,22 @@ class MedicalRecordController extends Controller
     // Download file
     public function downloadMedicalRecord($id)
     {
-      $medicalRecord = MedicalRecord::findOrFail($id);
-      return Storage::download($medicalRecord->attachment);
+        $medicalRecord = MedicalRecord::findOrFail($id);
+        
+        // Get the storage disk
+        $disk = Storage::disk('public');
+        
+        // Verify file exists
+        if (!$disk->exists($medicalRecord->attachment)) {
+            return back()->with('error', 'The requested file no longer exists');
+        }
+        
+        // Get clean filename for download
+        $filename = pathinfo($medicalRecord->attachment, PATHINFO_BASENAME);
+        
+        // Return download response
+        return $disk->download($medicalRecord->attachment, $filename, [
+            'Content-Type' => $disk->mimeType($medicalRecord->attachment),
+        ]);
     }
 }

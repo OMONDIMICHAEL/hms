@@ -1,4 +1,16 @@
 <x-app-layout>
+    @if(session('debug'))
+    <div class="bg-yellow-100 p-4 mb-4 rounded">
+        <pre>{{ print_r(session('debug'), true) }}</pre>
+    </div>
+@endif
+
+@if(session('updated_record'))
+    <div class="bg-green-100 p-4 mb-4 rounded">
+        <h4>Updated Record:</h4>
+        <pre>{{ print_r(session('updated_record')->toArray(), true) }}</pre>
+    </div>
+@endif
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('Edit Medical Record') }}
